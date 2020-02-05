@@ -7,7 +7,9 @@ import (
 	"time"
 
 	//"time"
-	"controllers"
+	//"controllers"
+	"github.com/ekomi-ltd/cronoscope/controllers"
+
 	"os"
 )
 
@@ -92,6 +94,10 @@ func main() {
 	// Wait for process
 	// Wait for routine
 	// Add logging
+
+	fmt.Println(os.Args)
+	os.Exit(0)
+
 	quit := make(chan bool)
 	done := make(chan bool)
 
