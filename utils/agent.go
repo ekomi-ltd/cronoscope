@@ -2,9 +2,11 @@ package utils
 
 import (
 	"fmt"
+	"net"
+	"net/http"
+	"strconv"
 	"strings"
 	"time"
-	// "net/http"
 
 	"github.com/ekomi-ltd/cronoscope/controllers"
 )
@@ -14,22 +16,43 @@ var ticker *time.Ticker
 
 func sendData(builder *strings.Builder, config *CronoscopeConfig) {
 
-	fmt.Print(builder.String())
+	// fmt.Print(builder.String())
 
-	// retries := 3
-	// reader := strings.NewReader(builder.String())
+	var response *http.Response = nil
+	var err error
+	retries := config.PushRetries
+	forSometime := time.Duration(config.PushRetriesInterval) * time.Second
+	reader := strings.NewReader(builder.String())
+	endpoint := net.JoinHostPort(config.PushergatewayHost, strconv.Itoa(config.PushergatewayPort))
+	failed := true
 
-	// for retries > 0 {
-	// 	response, err := http.Post(config.PushergatewayHost, "application/octet-stream", reader)
+	closeResponse := func() {
+		if response != nil {
+			response.Body.Close()
+		}
+	}
 
-	// 	if err != nil {
-	// 		retries--
-	// 	} else {
-	// 		break;
-	// 	}
-	// }
+	for retries > 0 {
+		response, err = http.Post(endpoint, "application/octet-stream", reader)
 
-	// defer response.Body.Close()
+		if err != nil {
+			retries--
+			response = nil
+			failed = true
+			fmt.Printf("%d/%d Retry Faild to send data, Sleeping for %d seconds",
+				(config.PushRetries - retries), config.PushRetries, config.PushRetriesInterval)
+			time.Sleep(forSometime)
+		} else {
+			failed = true
+			break
+		}
+	}
+
+	if failed == true {
+		fmt.Printf("All %d retries with %d second intervals failed\n", config.PushRetries, config.PushRetriesInterval)
+	}
+
+	defer closeResponse()
 
 }
 
