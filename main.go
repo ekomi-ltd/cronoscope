@@ -9,7 +9,7 @@ import (
 	"time"
 )
 
-func Start(args ...string) (p *os.Process, err error) {
+func StartProcess(args ...string) (p *os.Process, err error) {
 	if args[0], err = exec.LookPath(args[0]); err == nil {
 		var procAttr os.ProcAttr
 		procAttr.Files = []*os.File{os.Stdin,
@@ -33,13 +33,14 @@ func StartMonitoringAgent(ticker *time.Ticker, done <-chan bool) {
 		fmt.Print(builder.String())
 	}
 
-	// 1. Send at the very start
+	// 1. Send at the start and end
 	readAndSendMetrics()
+	defer readAndSendMetrics()
 
 	for {
 		select {
 		case <-done:
-			readAndSendMetrics() // 3. Send when quiting
+			fmt.Println("Timer stop return statement!")
 			return
 		case <-ticker.C:
 			readAndSendMetrics() // 2. And of course, at configured internvals
@@ -60,7 +61,7 @@ func main() {
 
 	go StartMonitoringAgent(ticker, done)
 
-	process, err := Start(os.Args[1:]...)
+	process, err := StartProcess(os.Args[1:]...)
 
 	if err != nil {
 		fmt.Print(err)
@@ -69,9 +70,10 @@ func main() {
 
 	fmt.Println("Going to wait for the process.")
 	process.Wait()
-	fmt.Print("Process stopped")
-	fmt.Print("Going to stop the timer")
+	fmt.Println("Process stopped")
+	fmt.Println("Going to stop the timer")
 	ticker.Stop()
-	fmt.Print("Timer stopped")
+	done <- true
+	fmt.Println("Timer stopped")
 
 }
