@@ -11,10 +11,10 @@ type CronoscopeConfig struct {
 	PollingInterval   int    `default:"10" split_words:"true"`
 	PushergatewayHost string `required:"true" split_words:"true"`
 	PushergatewayPort int    `default:"9091" split_words:"true"`
-	PushRetries int	`default:"3" split_words:"true"`
+	PushRetries       int    `default:"3" split_words:"true"`
 }
 
-func ReadConfig() (CronoscopeConfig){
+func ReadConfig() CronoscopeConfig {
 	var config CronoscopeConfig
 	err := envconfig.Process("CRONOSCOPE", &config)
 

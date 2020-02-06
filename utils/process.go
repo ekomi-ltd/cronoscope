@@ -1,11 +1,12 @@
 package utils
 
 import (
+	"fmt"
 	"os"
 	"os/exec"
 )
 
-func StartProcess(args ...string) (p *os.Process, err error) {
+func startProcess(args ...string) (p *os.Process, err error) {
 	if args[0], err = exec.LookPath(args[0]); err == nil {
 		var procAttr os.ProcAttr
 		procAttr.Files = []*os.File{os.Stdin,
@@ -16,4 +17,15 @@ func StartProcess(args ...string) (p *os.Process, err error) {
 		}
 	}
 	return nil, err
+}
+
+func LaunchProcess() (p *os.Process) {
+	process, err := startProcess(os.Args[1:]...)
+
+	if err != nil {
+		fmt.Print(err)
+		os.Exit(1)
+	}
+
+	return process
 }

@@ -9,11 +9,11 @@ import (
 	"github.com/ekomi-ltd/cronoscope/controllers"
 )
 
-var done chan bool= make(chan bool)
+var done chan bool = make(chan bool)
 var ticker *time.Ticker
 
 func sendData(builder *strings.Builder, config *CronoscopeConfig) {
-	
+
 	fmt.Print(builder.String())
 
 	// retries := 3
@@ -33,8 +33,7 @@ func sendData(builder *strings.Builder, config *CronoscopeConfig) {
 
 }
 
-
-func startMonitoringAgent(config * CronoscopeConfig) {
+func startMonitoringAgent(config *CronoscopeConfig) {
 
 	var builder strings.Builder
 	memoryController := controllers.NewMemoryController()
@@ -61,12 +60,12 @@ func startMonitoringAgent(config * CronoscopeConfig) {
 	}
 }
 
-func StartAgent(config * CronoscopeConfig) {
+func StartAgent(config *CronoscopeConfig) {
 	ticker = time.NewTicker(time.Duration(config.PollingInterval) * time.Second)
 	go startMonitoringAgent(config)
 }
 
-func StopAgent(){
+func StopAgent() {
 	ticker.Stop()
 	done <- true
 	fmt.Println("Timer stopped")
