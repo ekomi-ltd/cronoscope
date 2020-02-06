@@ -50,6 +50,11 @@ func StartMonitoringAgent(ticker *time.Ticker, done <-chan bool) {
 
 func main() {
 
+	//	CRONOSCOPE_POLLING_INTERVAL
+	// 	CRONOSCOPE_PUSHERGATEWAY_HOST
+	//	CRONOSCOPE_PUSHERGATEWAY_PORT
+	//  CRONOSCOPE_ADDITIONAL_LABELS
+
 	done := make(chan bool)
 	ticker := time.NewTicker(5 * time.Second)
 
