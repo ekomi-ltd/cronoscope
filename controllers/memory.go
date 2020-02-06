@@ -3,8 +3,8 @@ package controllers
 import (
 	"fmt"
 	"io/ioutil"
-	"strings"
 	"path"
+	"strings"
 )
 
 type MemoryController struct {
