@@ -96,7 +96,14 @@ func main() {
 	// Add logging
 
 	fmt.Println(os.Args)
-	os.Exit(0)
+	process, err := Start(os.Args[1:]...)
+
+	if err != nil {
+		fmt.Print(err)
+		os.Exit(1)
+	}
+
+	process.Wait()
 
 	quit := make(chan bool)
 	done := make(chan bool)
