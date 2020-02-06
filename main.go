@@ -95,7 +95,6 @@ func main() {
 	// Wait for routine
 	// Add logging
 
-	fmt.Println(os.Args)
 	process, err := Start(os.Args[1:]...)
 
 	if err != nil {
