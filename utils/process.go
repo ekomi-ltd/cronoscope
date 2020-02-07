@@ -19,6 +19,8 @@ func startProcess(args ...string) (p *os.Process, err error) {
 	return nil, err
 }
 
+// LaunchProcess will launch the process given on the command line and would
+// return the os.Process pointer
 func LaunchProcess() (p *os.Process) {
 	process, err := startProcess(os.Args[1:]...)
 

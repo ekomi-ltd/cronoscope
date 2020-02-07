@@ -7,14 +7,19 @@ import (
 	"github.com/kelseyhightower/envconfig"
 )
 
+// CronoscopeConfig is the application configuration
 type CronoscopeConfig struct {
 	PollingInterval     int    `default:"10" split_words:"true"`
 	PushergatewayHost   string `required:"true" split_words:"true"`
 	PushergatewayPort   int    `default:"9091" split_words:"true"`
 	PushRetries         int    `default:"3" split_words:"true"`
 	PushRetriesInterval int    `default:"2" split_words:"true"`
+	LabelJob            string `required:"true" split_words:"true"`
+	LabelInstance       string `required:"true" split_words:"true"`
 }
 
+// ReadConfig reads the configuration from enviornment and validates.
+// In case of an error, this function will quit the program
 func ReadConfig() CronoscopeConfig {
 	var config CronoscopeConfig
 	err := envconfig.Process("CRONOSCOPE", &config)

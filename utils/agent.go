@@ -11,9 +11,15 @@ import (
 	"github.com/ekomi-ltd/cronoscope/controllers"
 )
 
+// done channel used to indicate to the go routine that we are done
 var done chan bool = make(chan bool)
+
+// ticker is the heartbeat of the monitoring agent.
 var ticker *time.Ticker
 
+// sendData sends the data from thebuilder to the pushergateway endpoint
+// as mentioned in the configuration. Retries are also read from the
+// configuration
 func sendData(builder *strings.Builder, config *CronoscopeConfig) {
 
 	// fmt.Print(builder.String())
@@ -23,7 +29,8 @@ func sendData(builder *strings.Builder, config *CronoscopeConfig) {
 	retries := config.PushRetries
 	forSometime := time.Duration(config.PushRetriesInterval) * time.Second
 	reader := strings.NewReader(builder.String())
-	endpoint := net.JoinHostPort(config.PushergatewayHost, strconv.Itoa(config.PushergatewayPort))
+	host := net.JoinHostPort(config.PushergatewayHost, strconv.Itoa(config.PushergatewayPort))
+	endpoint := fmt.Sprintf("http://%s/metrics/job/%s/instance/%s", host, config.LabelJob, config.LabelInstance)
 	failed := true
 
 	closeResponse := func() {
@@ -43,8 +50,9 @@ func sendData(builder *strings.Builder, config *CronoscopeConfig) {
 				(config.PushRetries - retries), config.PushRetries, config.PushRetriesInterval)
 			time.Sleep(forSometime)
 		} else {
-			failed = true
-			break
+			failed = false
+			retries = 0
+			response.Body.Close()
 		}
 	}
 
@@ -56,6 +64,8 @@ func sendData(builder *strings.Builder, config *CronoscopeConfig) {
 
 }
 
+// startMonitoringAgent stars the infinit loop of reading and sending the
+// data over the wire on fixed intervals.
 func startMonitoringAgent(config *CronoscopeConfig) {
 
 	var builder strings.Builder
@@ -83,11 +93,14 @@ func startMonitoringAgent(config *CronoscopeConfig) {
 	}
 }
 
+// StartAgent initilizes the tickeer and starts the monitoring as a go routine.
 func StartAgent(config *CronoscopeConfig) {
 	ticker = time.NewTicker(time.Duration(config.PollingInterval) * time.Second)
 	go startMonitoringAgent(config)
 }
 
+// StopAgent stops the earlier started agent by stopping the ticker and sending
+// the done signal on the channel
 func StopAgent() {
 	ticker.Stop()
 	done <- true

@@ -7,13 +7,15 @@ import (
 	"strings"
 )
 
+// MemoryController represetns the location in filesystem
+// to read the stats from.
 type MemoryController struct {
 	path    string
 	metrics map[string]map[string]string
 }
 
-/// NewMemoryMetrics
-/// creates a new memory metrics controller
+// NewMemoryMetrics creates a new instance of the MemoryController by populating
+// the location of the files where to read the stats from.
 func NewMemoryController() *MemoryController {
 	memoryRoot := "/sys/fs/cgroup/memory"
 	m := MemoryController{
@@ -46,6 +48,7 @@ func NewMemoryController() *MemoryController {
 	return &m
 }
 
+// Read will read the status and would write them to the given string builder.
 func (m *MemoryController) Read(b *strings.Builder) {
 
 	for metric, config := range m.metrics {
