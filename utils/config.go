@@ -2,6 +2,7 @@ package utils
 
 import (
 	"fmt"
+	"log"
 	"os"
 
 	"github.com/kelseyhightower/envconfig"
@@ -25,8 +26,7 @@ func ReadConfig() CronoscopeConfig {
 	err := envconfig.Process("CRONOSCOPE", &config)
 
 	if err != nil {
-		fmt.Println(err.Error())
-		os.Exit(1)
+		log.Fatalf(err.Error())
 	}
 
 	retryTime := (config.PushRetriesInterval * config.PushRetries) + 3

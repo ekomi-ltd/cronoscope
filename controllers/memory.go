@@ -3,6 +3,7 @@ package controllers
 import (
 	"fmt"
 	"io/ioutil"
+	"log"
 	"path"
 	"strings"
 )
@@ -14,7 +15,7 @@ type MemoryController struct {
 	metrics map[string]map[string]string
 }
 
-// NewMemoryMetrics creates a new instance of the MemoryController by populating
+// NewMemoryController creates a new instance of the MemoryController by populating
 // the location of the files where to read the stats from.
 func NewMemoryController() *MemoryController {
 	memoryRoot := "/sys/fs/cgroup/memory"
@@ -54,7 +55,7 @@ func (m *MemoryController) Read(b *strings.Builder) {
 	for metric, config := range m.metrics {
 		data, err := ioutil.ReadFile(config["path"])
 		if err != nil {
-			fmt.Println("Faild to read " + config["path"])
+			log.Printf("MemoryController - Failed to read %s", config["path"])
 		}
 		b.WriteString(fmt.Sprintf("# TYPE %v %v\n", metric, config["type"]))
 		b.WriteString(fmt.Sprintf("# HELP %v %v\n", metric, config["help"]))

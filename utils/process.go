@@ -1,7 +1,7 @@
 package utils
 
 import (
-	"fmt"
+	"log"
 	"os"
 	"os/exec"
 )
@@ -25,8 +25,7 @@ func LaunchProcess() (p *os.Process) {
 	process, err := startProcess(os.Args[1:]...)
 
 	if err != nil {
-		fmt.Print(err)
-		os.Exit(1)
+		log.Panicf(err.Error())
 	}
 
 	return process

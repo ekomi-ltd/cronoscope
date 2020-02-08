@@ -2,6 +2,7 @@ package utils
 
 import (
 	"fmt"
+	"log"
 	"net"
 	"net/http"
 	"strconv"
@@ -46,7 +47,7 @@ func sendData(builder *strings.Builder, config *CronoscopeConfig) {
 			retries--
 			response = nil
 			failed = true
-			fmt.Printf("%d/%d Retry Faild to send data, Sleeping for %d seconds",
+			log.Printf("%d/%d Retry Faild to send data, Sleeping for %d seconds",
 				(config.PushRetries - retries), config.PushRetries, config.PushRetriesInterval)
 			time.Sleep(forSometime)
 		} else {
@@ -57,7 +58,7 @@ func sendData(builder *strings.Builder, config *CronoscopeConfig) {
 	}
 
 	if failed == true {
-		fmt.Printf("All %d retries with %d second intervals failed\n", config.PushRetries, config.PushRetriesInterval)
+		log.Printf("All %d retries with %d second intervals failed\n", config.PushRetries, config.PushRetriesInterval)
 	}
 
 	defer closeResponse()
@@ -84,7 +85,6 @@ func startMonitoringAgent(config *CronoscopeConfig) {
 	for {
 		select {
 		case <-done:
-			fmt.Println("Timer stop return statement!")
 			return
 		case <-ticker.C:
 			readAndSendMetrics() // 2. And of course, at configured internvals
@@ -104,5 +104,4 @@ func StartAgent(config *CronoscopeConfig) {
 func StopAgent() {
 	ticker.Stop()
 	done <- true
-	fmt.Println("Timer stopped")
 }
