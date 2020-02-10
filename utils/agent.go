@@ -95,13 +95,24 @@ func startMonitoringAgent(config *CronoscopeConfig) {
 
 // StartAgent initilizes the tickeer and starts the monitoring as a go routine.
 func StartAgent(config *CronoscopeConfig) {
+
+	if config.Disabled == true {
+		log.Println("CRONOSCOPE_DISABLED - not starting agent.")
+		return
+	}
+
 	ticker = time.NewTicker(time.Duration(config.PollingInterval) * time.Second)
 	go startMonitoringAgent(config)
 }
 
 // StopAgent stops the earlier started agent by stopping the ticker and sending
 // the done signal on the channel
-func StopAgent() {
+func StopAgent(config *CronoscopeConfig) {
+
+	if config.Disabled == true {
+		return
+	}
+
 	ticker.Stop()
 	done <- true
 }
