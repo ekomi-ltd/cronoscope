@@ -4,12 +4,14 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"strings"
 
 	"github.com/kelseyhightower/envconfig"
 )
 
 // CronoscopeConfig is the application configuration
 type CronoscopeConfig struct {
+	Disabled            bool   `default: false`
 	PollingInterval     int    `default:"10" split_words:"true"`
 	PushergatewayHost   string `required:"true" split_words:"true"`
 	PushergatewayPort   int    `default:"9091" split_words:"true"`
@@ -22,11 +24,21 @@ type CronoscopeConfig struct {
 // ReadConfig reads the configuration from enviornment and validates.
 // In case of an error, this function will quit the program
 func ReadConfig() CronoscopeConfig {
+
 	var config CronoscopeConfig
+
+	isDisabled, isSet := os.LookupEnv("CRONOSCOPE_DISABLED")
+
+	if isSet == true && strings.ToLower(isDisabled) == "true" {
+		config.Disabled = true
+		log.Printf("CRONOSCOPE_DISABLED was set to true. Not processing further environment variables.")
+		return config
+	}
+
 	err := envconfig.Process("CRONOSCOPE", &config)
 
 	if len(os.Args) < 2 {
-		fmt.Printf("usage: cronosocpe your-command-here")
+		fmt.Println("usage: cronosocpe your-command-here")
 		os.Exit(1)
 	}
 
