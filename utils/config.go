@@ -25,6 +25,11 @@ func ReadConfig() CronoscopeConfig {
 	var config CronoscopeConfig
 	err := envconfig.Process("CRONOSCOPE", &config)
 
+	if len(os.Args) < 2 {
+		fmt.Printf("usage: cronosocpe your-command-here")
+		os.Exit(1)
+	}
+
 	if err != nil {
 		log.Fatalf(err.Error())
 	}
