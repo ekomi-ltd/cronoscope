@@ -32,3 +32,4 @@ The cronoscope is totally configured via environment variables and there are no 
 * `CRONOSCOPE_POLLING_INTERVAL`  optional, defaults to 10 seconds
 * `CRONOSCOPE_PUSH_RETRIES` optional, number of times cronoscope will try to push metrics to the pushergateway in case of failure. Defaults to 3 retries.
 * `CRONOSCOPE_PUSHRETRIESINTERVAL` optional, intervals between retries. Defaults to 2 seconds.
+* `CRONOSCOPE_DISABLED` just runs the given program and no monitoring agent is starated. Useful in local or test enivronments.

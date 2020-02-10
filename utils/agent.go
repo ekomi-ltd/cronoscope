@@ -97,7 +97,7 @@ func startMonitoringAgent(config *CronoscopeConfig) {
 func StartAgent(config *CronoscopeConfig) {
 
 	if config.Disabled == true {
-		log.Println("CRONOSCOPE_DISABLED - not starting agent.")
+		log.Println("CRONOSCOPE_DISABLED - Monitoring agent will not be started.")
 		return
 	}
 
