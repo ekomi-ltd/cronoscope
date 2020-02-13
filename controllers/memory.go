@@ -57,8 +57,8 @@ func (m *MemoryController) Read(b *strings.Builder) {
 		if err != nil {
 			log.Printf("MemoryController - Failed to read %s", config["path"])
 		}
-		b.WriteString(fmt.Sprintf("# TYPE %v %v\n", metric, config["type"]))
-		b.WriteString(fmt.Sprintf("# HELP %v %v\n", metric, config["help"]))
-		b.WriteString(fmt.Sprintf("%v %v\n", metric, string(data)))
+		b.WriteString(fmt.Sprintf("# TYPE cronoscope_%v %v\n", metric, config["type"]))
+		b.WriteString(fmt.Sprintf("# HELP cronoscope_%v %v\n", metric, config["help"]))
+		b.WriteString(fmt.Sprintf("cronoscope_%v %v\n", metric, string(data)))
 	}
 }
