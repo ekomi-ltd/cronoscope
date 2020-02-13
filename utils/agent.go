@@ -29,7 +29,7 @@ func sendData(builder *strings.Builder, config *CronoscopeConfig) {
 	forSometime := time.Duration(config.PushRetriesInterval) * time.Second
 	reader := strings.NewReader(builder.String())
 	host := net.JoinHostPort(config.PushergatewayHost, strconv.Itoa(config.PushergatewayPort))
-	endpoint := fmt.Sprintf("http://%s/metrics/job/%s/instance/%s", host, config.LabelJob, config.LabelInstance)
+	endpoint := fmt.Sprintf("http://%s/metrics/job/%s", host, config.LabelJob)
 	failed := true
 
 	closeResponse := func() {
