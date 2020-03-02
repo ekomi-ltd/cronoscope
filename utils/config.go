@@ -18,28 +18,36 @@ type CronoscopeConfig struct {
 	PushRetries         int    `default:"3" split_words:"true"`
 	PushRetriesInterval int    `default:"2" split_words:"true"`
 	LabelJob            string `required:"true" split_words:"true"`
-	Labels              map[string]string
+	Labels              string
 }
 
 const CRONOSCOPE_LABELS_PREFIX = "CRONOSCOPE_LABEL_"
+const JOB_LABEL = CRONOSCOPE_LABELS_PREFIX + "JOB"
 
-func readLabels(config *CronoscopeConfig) {
-	config.Labels = make(map[string]string)
+func ReadLabels() string {
+
+	var builder strings.Builder
 
 	for _, e := range os.Environ() {
 		pair := strings.SplitN(e, "=", 2)
 		label := strings.ToUpper(pair[0])
 		value := pair[1]
+		isLabel := strings.HasPrefix(pair[0], CRONOSCOPE_LABELS_PREFIX)
+		isNotJobLabel := !(label == JOB_LABEL)
 
-		if strings.HasPrefix(pair[0], CRONOSCOPE_LABELS_PREFIX) {
+		if isLabel && isNotJobLabel {
 			label = strings.ToLower(strings.TrimPrefix(label, CRONOSCOPE_LABELS_PREFIX))
-			config.Labels[label] = value
+			value = strings.TrimSpace(value)
+			builder.WriteString(fmt.Sprintf("%v=\"%v\",", label, value))
 		}
 
 	}
 
-	// Because these are already top level methdos
-	delete(config.Labels, "job")
+	if builder.Len() > 0 {
+		return "{" + strings.Trim(builder.String(), ",") + "}"
+	}
+
+	return ""
 }
 
 // ReadConfig reads the configuration from enviornment and validates.
@@ -47,7 +55,7 @@ func readLabels(config *CronoscopeConfig) {
 func ReadConfig() CronoscopeConfig {
 
 	var config CronoscopeConfig
-	readLabels(&config)
+	// config.Labels = readLabels()
 	return config
 
 	// 1. If the program to be executed is missing, no point in
