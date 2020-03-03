@@ -13,8 +13,8 @@ func TestNewCPUAcctController(t *testing.T) {
 		}
 	}
 
-	t.Run("Should initialize fields properly", func(t *testing.T){
-		controller := NewCPUAcctController()
+	t.Run("Should initialize fields properly", func(t *testing.T) {
+		controller := NewCPUAcctController("")
 		assertStringEqual(t, controller.path, "/sys/fs/cgroup/cpuacct/cpuacct.stat")
 		assertStringEqual(t, controller.metricType, "gauge")
 	})

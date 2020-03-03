@@ -23,13 +23,14 @@ var ticker *time.Ticker
 // configuration
 func sendData(builder *strings.Builder, config *CronoscopeConfig) {
 
+	fmt.Print(builder.String())
 	var response *http.Response = nil
 	var err error
 	retries := config.PushRetries
 	forSometime := time.Duration(config.PushRetriesInterval) * time.Second
 	reader := strings.NewReader(builder.String())
 	host := net.JoinHostPort(config.PushergatewayHost, strconv.Itoa(config.PushergatewayPort))
-	endpoint := fmt.Sprintf("http://%s/metrics/job/%s/instance/%s", host, config.LabelJob, config.LabelInstance)
+	endpoint := fmt.Sprintf("http://%s/metrics/job/%s", host, config.LabelJob)
 	failed := true
 
 	closeResponse := func() {
@@ -68,8 +69,8 @@ func sendData(builder *strings.Builder, config *CronoscopeConfig) {
 func startMonitoringAgent(config *CronoscopeConfig) {
 
 	var builder strings.Builder
-	memoryController := controllers.NewMemoryController()
-	cpuacctController := controllers.NewCPUAcctController()
+	memoryController := controllers.NewMemoryController(config.MetricsPrefix, config.Labels)
+	cpuacctController := controllers.NewCPUAcctController(config.MetricsPrefix, config.Labels)
 
 	readAndSendMetrics := func() {
 		builder.Reset()
