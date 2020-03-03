@@ -1,7 +1,6 @@
 package controllers
 
 import (
-	"fmt"
 	"io/ioutil"
 	"log"
 	"strings"
@@ -11,11 +10,13 @@ import (
 type CPUAcctController struct {
 	path       string
 	metricType string
+	labels     string
 }
 
 // NewCPUAcctController initialises a new controller to be used.
-func NewCPUAcctController() *CPUAcctController {
+func NewCPUAcctController(labels string) *CPUAcctController {
 	cc := CPUAcctController{
+		labels:     labels,
 		path:       "/sys/fs/cgroup/cpuacct/cpuacct.stat",
 		metricType: "gauge",
 	}
@@ -48,11 +49,6 @@ func (c *CPUAcctController) Read(b *strings.Builder) {
 		return
 	}
 
-	b.WriteString(fmt.Sprintf("# TYPE cronoscope_cpuacct_stat_user %v\n", c.metricType))
-	b.WriteString(fmt.Sprintf("# HELP cronoscope_cpuacct_stat_user CPU time spent in user mode\n"))
-	b.WriteString(fmt.Sprintf("cronoscope_cpuacct_stat_user %v\n", userLine[1]))
-
-	b.WriteString(fmt.Sprintf("# TYPE cronoscope_cpuacct_stat_system %v\n", c.metricType))
-	b.WriteString(fmt.Sprintf("# HELP cronoscope_cpuacct_stat_system CPU time spent in kernel mode\n"))
-	b.WriteString(fmt.Sprintf("cronoscope_cpuacct_stat_system %v\n", systemLine[1]))
+	writeMetric(b, "cpuacct_stat_user", userLine[1], c.labels, c.metricType, "CPU time spent in user mode")
+	writeMetric(b, "cpuacct_stat_system", systemLine[1], c.labels, c.metricType, "CPU time spent in kernel mode")
 }

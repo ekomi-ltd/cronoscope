@@ -62,9 +62,6 @@ func (m *MemoryController) Read(b *strings.Builder) {
 			continue
 		}
 		value = string(data)
-		// b.WriteString(fmt.Sprintf("# TYPE cronoscope_%v %v\n", metric, config["type"]))
-		// b.WriteString(fmt.Sprintf("# HELP cronoscope_%v %v\n", metric, config["help"]))
-		// b.WriteString(fmt.Sprintf("cronoscope_%v %v\n", metric, string(data)))
 		writeMetric(b, metric, value, m.labels, config["type"], config["help"])
 	}
 }
