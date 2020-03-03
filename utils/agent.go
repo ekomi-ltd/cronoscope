@@ -69,8 +69,8 @@ func sendData(builder *strings.Builder, config *CronoscopeConfig) {
 func startMonitoringAgent(config *CronoscopeConfig) {
 
 	var builder strings.Builder
-	memoryController := controllers.NewMemoryController(config.Labels)
-	cpuacctController := controllers.NewCPUAcctController(config.Labels)
+	memoryController := controllers.NewMemoryController(config.MetricsPrefix, config.Labels)
+	cpuacctController := controllers.NewCPUAcctController(config.MetricsPrefix, config.Labels)
 
 	readAndSendMetrics := func() {
 		builder.Reset()

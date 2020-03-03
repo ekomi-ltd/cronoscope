@@ -10,18 +10,20 @@ import (
 // MemoryController represetns the location in filesystem
 // to read the stats from.
 type MemoryController struct {
-	path    string
-	metrics map[string]map[string]string
-	labels  string
+	path          string
+	metrics       map[string]map[string]string
+	labels        string
+	metricsPrefix string
 }
 
 // NewMemoryController creates a new instance of the MemoryController by populating
 // the location of the files where to read the stats from.
-func NewMemoryController(labels string) *MemoryController {
+func NewMemoryController(metricsPrefix string, labels string) *MemoryController {
 	memoryRoot := "/sys/fs/cgroup/memory"
 	m := MemoryController{
-		labels: labels,
-		path:   memoryRoot,
+		metricsPrefix: metricsPrefix,
+		labels:        labels,
+		path:          memoryRoot,
 		metrics: map[string]map[string]string{
 			"memory_limit_in_bytes": map[string]string{
 				"help": "Limit of memory usage",
@@ -62,6 +64,6 @@ func (m *MemoryController) Read(b *strings.Builder) {
 			continue
 		}
 		value = string(data)
-		writeMetric(b, metric, value, m.labels, config["type"], config["help"])
+		writeMetric(b, m.metricsPrefix, metric, value, m.labels, config["type"], config["help"])
 	}
 }

@@ -8,17 +8,19 @@ import (
 
 // CPUAcctController represents a CPU accounting controller
 type CPUAcctController struct {
-	path       string
-	metricType string
-	labels     string
+	path          string
+	metricType    string
+	labels        string
+	metricsPrefix string
 }
 
 // NewCPUAcctController initialises a new controller to be used.
-func NewCPUAcctController(labels string) *CPUAcctController {
+func NewCPUAcctController(metricsPrefix string, labels string) *CPUAcctController {
 	cc := CPUAcctController{
-		labels:     labels,
-		path:       "/sys/fs/cgroup/cpuacct/cpuacct.stat",
-		metricType: "gauge",
+		metricsPrefix: metricsPrefix,
+		labels:        labels,
+		path:          "/sys/fs/cgroup/cpuacct/cpuacct.stat",
+		metricType:    "gauge",
 	}
 
 	return &cc
@@ -49,6 +51,6 @@ func (c *CPUAcctController) Read(b *strings.Builder) {
 		return
 	}
 
-	writeMetric(b, "cpuacct_stat_user", userLine[1], c.labels, c.metricType, "CPU time spent in user mode")
-	writeMetric(b, "cpuacct_stat_system", systemLine[1], c.labels, c.metricType, "CPU time spent in kernel mode")
+	writeMetric(b, c.metricsPrefix, "cpuacct_stat_user", userLine[1], c.labels, c.metricType, "CPU time spent in user mode")
+	writeMetric(b, c.metricsPrefix, "cpuacct_stat_system", systemLine[1], c.labels, c.metricType, "CPU time spent in kernel mode")
 }

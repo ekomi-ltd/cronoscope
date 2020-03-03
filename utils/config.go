@@ -11,13 +11,14 @@ import (
 
 // CronoscopeConfig is the application configuration
 type CronoscopeConfig struct {
-	Disabled            bool   `default: false`
+	Disabled            bool
 	PollingInterval     int    `default:"10" split_words:"true"`
 	PushergatewayHost   string `required:"true" split_words:"true"` // CRONOSCOPE_PUSHERGATEWAY_HOST
 	PushergatewayPort   int    `default:"9091" split_words:"true"`  // CRONOSCOPE_PUSHERGATEWAY_PORT
 	PushRetries         int    `default:"3" split_words:"true"`
 	PushRetriesInterval int    `default:"2" split_words:"true"`
 	LabelJob            string `required:"true" split_words:"true"`
+	MetricsPrefix       string `default:"crons_"`
 	Labels              string
 }
 
