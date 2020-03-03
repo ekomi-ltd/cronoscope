@@ -20,7 +20,7 @@ $ cronoscope /usr/bin/python main.py --retires 2 --user-id 23
 
 ```
 
-From above, the main.py is the program to be executed whereas rest are the 
+From above, the main.py is the program to be executed whereas rest are the arguments.
 
 ### Confguration
 The cronoscope is totally configured via environment variables and there are no configuration files. Following are the environment variables:
