@@ -23,6 +23,7 @@ var ticker *time.Ticker
 // configuration
 func sendData(builder *strings.Builder, config *CronoscopeConfig) {
 
+	fmt.Print(builder.String())
 	var response *http.Response = nil
 	var err error
 	retries := config.PushRetries
@@ -68,7 +69,7 @@ func sendData(builder *strings.Builder, config *CronoscopeConfig) {
 func startMonitoringAgent(config *CronoscopeConfig) {
 
 	var builder strings.Builder
-	memoryController := controllers.NewMemoryController()
+	memoryController := controllers.NewMemoryController(config.Labels)
 	cpuacctController := controllers.NewCPUAcctController()
 
 	readAndSendMetrics := func() {

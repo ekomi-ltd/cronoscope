@@ -7,7 +7,15 @@
             "request": "launch",
             "mode": "debug",
             "program": "${workspaceFolder}/main.go",
-
+            "args": ["/usr/bin/python", "/home/mohsin/Projects/ekomi/cronoscope/main.py"],
+            "env": {
+                "CRONOSCOPE_PUSHERGATEWAY_HOST": "localhost",
+                "CRONOSCOPE_PUSHERGATEWAY_PORT": "9091",
+                "CRONOSCOPE_LABEL_JOB": "sff",
+                "CRONOSCOPE_LABEL_INSTANCE": "sff",
+                "CRONOSCOPE_LABEL_ENV": "stage",
+                "CRONOSCOPE_LABEL_CLIENT": "axa",
+            }
         }
     ]
 }

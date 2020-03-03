@@ -1,7 +1,6 @@
 package controllers
 
 import (
-	"fmt"
 	"io/ioutil"
 	"log"
 	"path"
@@ -13,14 +12,16 @@ import (
 type MemoryController struct {
 	path    string
 	metrics map[string]map[string]string
+	labels  string
 }
 
 // NewMemoryController creates a new instance of the MemoryController by populating
 // the location of the files where to read the stats from.
-func NewMemoryController() *MemoryController {
+func NewMemoryController(labels string) *MemoryController {
 	memoryRoot := "/sys/fs/cgroup/memory"
 	m := MemoryController{
-		path: memoryRoot,
+		labels: labels,
+		path:   memoryRoot,
 		metrics: map[string]map[string]string{
 			"memory_limit_in_bytes": map[string]string{
 				"help": "Limit of memory usage",
@@ -52,13 +53,18 @@ func NewMemoryController() *MemoryController {
 // Read will read the status and would write them to the given string builder.
 func (m *MemoryController) Read(b *strings.Builder) {
 
+	value := ""
+
 	for metric, config := range m.metrics {
 		data, err := ioutil.ReadFile(config["path"])
 		if err != nil {
 			log.Printf("MemoryController - Failed to read %s", config["path"])
+			continue
 		}
-		b.WriteString(fmt.Sprintf("# TYPE cronoscope_%v %v\n", metric, config["type"]))
-		b.WriteString(fmt.Sprintf("# HELP cronoscope_%v %v\n", metric, config["help"]))
-		b.WriteString(fmt.Sprintf("cronoscope_%v %v\n", metric, string(data)))
+		value = string(data)
+		// b.WriteString(fmt.Sprintf("# TYPE cronoscope_%v %v\n", metric, config["type"]))
+		// b.WriteString(fmt.Sprintf("# HELP cronoscope_%v %v\n", metric, config["help"]))
+		// b.WriteString(fmt.Sprintf("cronoscope_%v %v\n", metric, string(data)))
+		writeMetric(b, metric, value, m.labels, config["type"], config["help"])
 	}
 }

@@ -13,8 +13,8 @@ import (
 type CronoscopeConfig struct {
 	Disabled            bool   `default: false`
 	PollingInterval     int    `default:"10" split_words:"true"`
-	PushergatewayHost   string `required:"true" split_words:"true"`
-	PushergatewayPort   int    `default:"9091" split_words:"true"`
+	PushergatewayHost   string `required:"true" split_words:"true"` // CRONOSCOPE_PUSHERGATEWAY_HOST
+	PushergatewayPort   int    `default:"9091" split_words:"true"`  // CRONOSCOPE_PUSHERGATEWAY_PORT
 	PushRetries         int    `default:"3" split_words:"true"`
 	PushRetriesInterval int    `default:"2" split_words:"true"`
 	LabelJob            string `required:"true" split_words:"true"`
@@ -24,7 +24,7 @@ type CronoscopeConfig struct {
 const CRONOSCOPE_LABELS_PREFIX = "CRONOSCOPE_LABEL_"
 const JOB_LABEL = CRONOSCOPE_LABELS_PREFIX + "JOB"
 
-func ReadLabels() string {
+func readLabels() string {
 
 	var builder strings.Builder
 
@@ -55,8 +55,7 @@ func ReadLabels() string {
 func ReadConfig() CronoscopeConfig {
 
 	var config CronoscopeConfig
-	// config.Labels = readLabels()
-	return config
+	config.Labels = readLabels()
 
 	// 1. If the program to be executed is missing, no point in
 	// looking at environment variables.
